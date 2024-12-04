@@ -16,7 +16,7 @@ root.title("Advanced Whisper Interface")
 
 # Inside the window
 myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=("Arial", 24))
-myLabel.pack(pady=20)  # Add some padding
+myLabel.pack(pady=15)  # Add some padding
 
 def model_choice(choice):
     whisper.setModelSize(choice)

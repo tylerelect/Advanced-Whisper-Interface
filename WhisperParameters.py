@@ -1,5 +1,6 @@
 # Defines the parameters using accessors and mutator methods
 
+# TODO: create original variable for large and any other non-english models for referring back to them
 class WhisperParameters:
     def __init__(self, language = "English", model = "Medium", outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
                  outputFormat = "txt",
@@ -23,6 +24,7 @@ class WhisperParameters:
 
     def setOutputFormat(self, outputFormat):
         self.outputFormat = outputFormat
+        print(self.getOutputFormat())
     def getOutputFormat(self):
         return self.outputFormat
 
@@ -38,25 +40,16 @@ class WhisperParameters:
 
     # Model Size
     def setModelSize(self, model):
-
-        word = self.model
-
-        # if split 2nd is En, switch language to english
-        language = word.split[1]
-        print("testing going to print language")
-        language.strip("(")
-        language.strip(",")
-        if(word.split[1] == "En"):
-            print("En yes yes")
-            self.language = "English"
-
-        if(model != None):
-            # Splits to only get the model name
-            word = model.split[0]
-
-
+        # Get just the first word of the model name
+        word = model.split()[0]
         self.model = word.lower()
-
+    
+        # Optional: Check for English model
+        if "en" in model.lower():
+            self.language = "English"
+        
+        #Test case
+        print(f"Model: {self.model}, Language: {self.language}")
     def getModelSize(self):
         return self.model.lower()
 

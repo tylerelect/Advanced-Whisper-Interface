@@ -13,7 +13,13 @@ class WhisperParameters:
         self.maxWordsPerLine = maxWordsPerLine
     
     def setLanguage(self, language):
-        self.language = language
+        if "en" in self.model.lower():
+            self.language = "English"
+            #make window warning user
+
+        else:
+            self.language = language
+
     def getLanguage(self):
         return self.language
     
@@ -25,6 +31,7 @@ class WhisperParameters:
     def setOutputFormat(self, outputFormat):
         self.outputFormat = outputFormat
         print(self.getOutputFormat())
+        
     def getOutputFormat(self):
         return self.outputFormat
 
@@ -40,18 +47,15 @@ class WhisperParameters:
 
     # Model Size
     def setModelSize(self, model):
-        # Get just the first word of the model name
-        word = model.split()[0]
-        self.model = word.lower()
-    
         # Optional: Check for English model
         if "en" in model.lower():
             self.language = "English"
         
+        # Get just the first word of the model name
+        self.model = model.split()[0].lower()
+            
         #Test case
         print(f"Model: {self.model}, Language: {self.language}")
+
     def getModelSize(self):
         return self.model.lower()
-
-    
-    # After the check if model is English only, throws error for other language being selected

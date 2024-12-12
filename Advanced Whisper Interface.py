@@ -28,7 +28,7 @@ modelLabel.pack()  # Add some padding
 
 # Create the combobox
 modelSelectBox = customtkinter.CTkComboBox(root, values=["Tiny (En, fast; 1gb)", "Base (1gb, En)", "Small (2gb, En)", "Medium (5gb, En)", "Large (10gb)", "Turbo (Fast, 6gb)"],
-                                     command=model_choice, variable=model_var)
+                                            command=model_choice, variable=model_var)
 modelSelectBox.pack(pady=5)
 
 modelSelection = customtkinter.CTkButton(root, text = "finalize")
@@ -46,11 +46,12 @@ outputFormat_var = customtkinter.StringVar(value="ALL")
 
 def outputFormat_choice(choice):
     whisper.setOutputFormat(choice)
-outputFormat_choice = "txt"
+outputFormat_choice = customtkinter.StringVar(value="txt")
+# outputFormat_choice = "txt"
 customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
 
 outputFormatBox = customtkinter.CTkComboBox(root, values=["All", "txt", "srt", "json", "vtt", "tsv"],
-                                     command=outputFormat_choice, variable=outputFormat_choice)
+                                            command = outputFormat_choice, variable=outputFormat_var)
 
 outputFormatBox.pack(pady=5)
 

@@ -46,7 +46,7 @@ outputFormat_var = customtkinter.StringVar(value="ALL")
 
 def outputFormat_choice(choice):
     whisper.setOutputFormat(choice)
-outputFormat_choice = customtkinter.StringVar(value="txt")
+outputFormat_var = customtkinter.StringVar(value="txt")
 # outputFormat_choice = "txt"
 customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
 
@@ -55,31 +55,17 @@ outputFormatBox = customtkinter.CTkComboBox(root, values=["All", "txt", "srt", "
 
 outputFormatBox.pack(pady=5)
 
-# allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="ALL",
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
 
-# txtRadio = customtkinter.CTkRadioButton(root, text="TXT", variable=outputFormat_var, value="txt", 
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
+# allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="",
+#                                        command=lambda: whisper.useCuda(True))
 
-# srtRadio = customtkinter.CTkRadioButton(root, text="SRT", variable=outputFormat_var, value="srt",
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
+# txtRadio = customtkinter.CTkRadioButton(root, text="CPU", variable=outputFormat_var, value="Nvidia", 
+#                                        command=lambda: whisper.useCuda(False))
 
-# jsonRadio = customtkinter.CTkRadioButton(root, text="JSON", variable=outputFormat_var, value="json",
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
-
-# vttRadio = customtkinter.CTkRadioButton(root, text="VTT", variable=outputFormat_var, value="vtt",
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
-
-# tsvRadio = customtkinter.CTkRadioButton(root, text="TSV", variable=outputFormat_var, value="tsv",
-#                                        command=lambda: whisper.setOutputFormat(outputFormat_var.get()))
 
 # # Pack the radio buttons
 # allRadio.pack(pady=2)
 # txtRadio.pack(pady=2)
-# srtRadio.pack(pady=2)
-# jsonRadio.pack(pady=2)
-# vttRadio.pack(pady=2)
-# tsvRadio.pack(pady=2)
 
 #push onto screen
 myLabel.pack()

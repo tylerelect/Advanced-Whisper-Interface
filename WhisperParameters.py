@@ -1,10 +1,13 @@
+import os
+import ctypes
+
 # Defines the parameters using accessors and mutator methods
 
 # TODO: create original variable for large and any other non-english models for referring back to them
 class WhisperParameters:
-    def __init__(self, language = "English", model = "Medium", outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
-                 outputFormat = "txt",
-                   wordTimestamps = True, maxWordsPerLine = 1):
+    def __init__(self, language = "English", model = "Medium",
+                 outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
+                 outputFormat = "txt", wordTimestamps = True, maxWordsPerLine = 1,):
         self.language = language
         self.model = model
         self.outputPath = None
@@ -12,11 +15,11 @@ class WhisperParameters:
         self.wordTimestamps = wordTimestamps
         self.maxWordsPerLine = maxWordsPerLine
     
+    # Set the language of the model to transcribe
     def setLanguage(self, language):
         if "en" in self.model.lower():
+            ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English", u"Error with selected model", 0)
             self.language = "English"
-            #make window warning user
-
         else:
             self.language = language
 
@@ -27,6 +30,9 @@ class WhisperParameters:
         self.outputPath = outputPath
     def getOutputPath(self):
         return self.outputPath
+    
+    # def setCustomFileName(self, name):
+    #     self.outputPath = os.path.join(self.outputPath, name)
 
     def setOutputFormat(self, outputFormat):
         self.outputFormat = outputFormat
@@ -59,3 +65,6 @@ class WhisperParameters:
 
     def getModelSize(self):
         return self.model.lower()
+    
+    def commandToRun():
+        return "whisper "

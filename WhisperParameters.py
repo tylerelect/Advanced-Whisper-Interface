@@ -8,7 +8,7 @@ from CheckCudaCapability import check_gpu_status
 class WhisperParameters:
     def __init__(self, language = "English", model = "Medium",
                  outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
-                 outputFormat = "txt", wordTimestamps = True, maxWordsPerLine = 1,):
+                 outputFormat = "txt", wordTimestamps = None, maxWordsPerLine = 1,):
         self.language = language
         self.model = model
         self.outputPath = None
@@ -45,11 +45,14 @@ class WhisperParameters:
 
     def setWordTimestamps(self, wordTimestamps):
         self.wordTimestamps = wordTimestamps
+        print("word timestamps value is: " + self.getWordTimestamps())
+
     def getWordTimestamps(self):
         return self.wordTimestamps
 
     def setMaxWordsPerLine(self, maxWordsPerLine):
         self.maxWordsPerLine = maxWordsPerLine
+        print("TEST YAY! USING MAX WORDS PER LINE!!!!")
     def getMaxWordsPerLine(self):
         return self.maxWordsPerLine
 

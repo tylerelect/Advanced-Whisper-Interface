@@ -1,3 +1,4 @@
+import ctypes
 from AutoInstallDependencies import AutoInstallDependencies
 from WhisperParameters import WhisperParameters
 
@@ -17,6 +18,15 @@ root.title("Advanced Whisper Interface")
 # Inside the window
 myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=("Arial", 24))
 myLabel.pack(pady=15)  # Add some padding
+
+# Choose files to convert
+
+
+
+
+
+
+
 
 def model_choice(choice):
     whisper.setModelSize(choice)
@@ -45,23 +55,50 @@ outputFormat_var = customtkinter.StringVar(value="txt")
 # outputFormat_choice = "txt"
 customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
 
-outputFormatBox = customtkinter.CTkComboBox(root, values=["All", "txt", "srt", "json", "vtt", "tsv"],
+outputFormatBox = customtkinter.CTkComboBox(root, values=["ALL", "txt", "srt", "json", "vtt", "tsv"],
                                             command = outputFormat_choice, variable=outputFormat_var)
 
 outputFormatBox.pack(pady=5)
+
+#Select language
+languageLabel = customtkinter.CTkLabel(root, text="Language", font=("Arial", 14))
+languageLabel.pack()
+
+def language_choice(choice):
+    whisper.setLanguage(choice)
+language_var = customtkinter.StringVar(value="English")
+# language_choice = "English"
+customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
+
+supported_languages = ["English", "Spanish", "French", "Afrikaans", "Arabic", "Armenian", "Azerbaijani", "Belarusian",
+                        "Bosnian", "Bulgarian", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English",
+                        "Estonian", "Finnish", "French", "Galician", "German", "Greek", "Hebrew", "Hindi", "Hungarian", 
+                        "Icelandic", "Indonesian", "Italian", "Japanese", "Kannada", "Kazakh", "Korean", 
+                        "Latvian", "Lithuanian", "Macedonian", "Malay", "Marathi", "Maori", "Nepali", "Norwegian", 
+                        "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian", 
+                        "Spanish", "Swahili", "Swedish", "Tagalog", "Tamil", "Thai", "Turkish", "Ukrainian", 
+                        "Urdu", "Vietnamese", "Welsh"]
+
+outputFormatBox = customtkinter.CTkComboBox(root, values=supported_languages,
+                                            command = language_choice, variable=language_var)
+outputFormatBox.pack(pady=5)
+
+
+def wordTimestamp_choice():
+    whisper.setWordTimestamps(wordTimestamp_var.get())
+
+
+wordTimestamp_var = customtkinter.StringVar(value="False")
+wordTimestampCheckbox = customtkinter.CTkCheckBox(root, text="Word Timestamps", command=wordTimestamp_choice,
+                                                    variable = wordTimestamp_var, onvalue="True", offvalue="False")
+# Pushes timestamp checkbox to the screen
+wordTimestampCheckbox.pack(pady=5)
 
 createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media")
 
 # allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="",
 #                                        command=lambda: whisper.useCuda(True))
-
-# txtRadio = customtkinter.CTkRadioButton(root, text="CPU", variable=outputFormat_var, value="Nvidia", 
-#                                        command=lambda: whisper.useCuda(False))
-
-
-# # Pack the radio buttons
 # allRadio.pack(pady=2)
-# txtRadio.pack(pady=2)
 
 #push onto screen
 myLabel.pack()

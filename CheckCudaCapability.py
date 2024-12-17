@@ -1,7 +1,17 @@
 import ctypes
 import subprocess
-import torch
 import os
+import sys
+# @staticmethod
+def install_torch_dependencies():
+    torchPackages = ['torch', 'torchvision', 'torchaudio']
+    subprocess.check_call([sys.executable, "-m", "pip", "install", *torchPackages, "--index-url", "https://download.pytorch.org/whl/cu124"])
+try:
+    import torch
+except ImportError:
+    ctypes.windll.user32.MessageBoxW(0, f"Torch is not installed", u"Found no Python torch installation. Installing...", 0)
+    install_torch_dependencies()
+    print(f"Successfully installed all torch dependencies.")
 
 def check_gpu_status():
     # Try to run the nvidia-smi command and decode the output
@@ -11,12 +21,11 @@ def check_gpu_status():
         print(output)
         
         if(check_cuda_installation() and check_cuda_libraries()):
-            ctypes.windll.user32.MessageBoxW(0, u"CUDA is fully installed and configured on your system.", u"CUDA Check Complete", 0)
-            print(torch.cuda.is_available())
+            print("CUDA is fully installed and configured on your system.", u"CUDA Check Complete")
 
             if(torch.cuda.is_available()):
                 print('Torch and Nvidia GPU detected!')
-                return True     
+                return True
         else:
             ctypes.windll.user32.MessageBoxW(0, u"Please check your CUDA installation.", u"CUDA Installation Issue", 0)
             return False
@@ -34,13 +43,11 @@ def check_gpu_status():
     except Exception: # this command not being found can raise quite a few different errors depending on the configuration
         print('No Nvidia GPU in system!')
 
-
-
 def check_cuda_installation():
     try:
         # Check if `nvcc` (CUDA compiler) is available in PATH
         nvcc_version = subprocess.check_output(['nvcc', '--version'], encoding='utf-8')
-        ctypes.windll.user32.MessageBoxW(0, f"CUDA is installed. NVCC version:\n{nvcc_version}", u"CUDA Check Success", 0)
+        print(f"CUDA is installed. NVCC version:\n{nvcc_version}", u"CUDA Check Success")
         return True
 
     except subprocess.CalledProcessError as e:
@@ -57,7 +64,7 @@ def check_cuda_libraries():
         cuda_path = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA"
         if os.path.exists(cuda_path):
             message = f"CUDA libraries are found in the expected path:\n{cuda_path}"
-            ctypes.windll.user32.MessageBoxW(0, message, u"CUDA Libraries Found", 0)
+            print(f"\nCUDA Libraries Found")
 
             #returns true when cuda does exist 
             return True
@@ -68,5 +75,3 @@ def check_cuda_libraries():
     except Exception as e:
         ctypes.windll.user32.MessageBoxW(0, f"Unexpected error: {e}", u"Library Check Error", 0)
         return False
-# if __name__ == "__main__":
-#     check_dependencies()

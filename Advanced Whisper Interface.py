@@ -31,10 +31,6 @@ modelSelectBox = customtkinter.CTkComboBox(root, values=["Tiny (En, fast; 1gb)",
                                             command=model_choice, variable=model_var)
 modelSelectBox.pack(pady=5)
 
-modelSelection = customtkinter.CTkButton(root, text = "finalize")
-
-# After the model selection elements, add:
-
 # Output Format Selection
 formatLabel = customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
 formatLabel.pack()
@@ -43,7 +39,6 @@ formatLabel.pack()
 outputFormat_var = customtkinter.StringVar(value="ALL")
 
 # Create radio buttons for each format
-
 def outputFormat_choice(choice):
     whisper.setOutputFormat(choice)
 outputFormat_var = customtkinter.StringVar(value="txt")
@@ -55,6 +50,7 @@ outputFormatBox = customtkinter.CTkComboBox(root, values=["All", "txt", "srt", "
 
 outputFormatBox.pack(pady=5)
 
+createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media")
 
 # allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="",
 #                                        command=lambda: whisper.useCuda(True))
@@ -69,7 +65,7 @@ outputFormatBox.pack(pady=5)
 
 #push onto screen
 myLabel.pack()
-modelSelection.pack()
+createTasks.pack()
 modelSelectBox.pack()
 
 # Loop back through

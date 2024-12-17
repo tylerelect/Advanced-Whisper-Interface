@@ -1,5 +1,6 @@
 import os
 import ctypes
+from CheckCudaCapability import check_gpu_status
 
 # Defines the parameters using accessors and mutator methods
 
@@ -14,6 +15,7 @@ class WhisperParameters:
         self.outputFormat = outputFormat
         self.wordTimestamps = wordTimestamps
         self.maxWordsPerLine = maxWordsPerLine
+        self.gpu = check_gpu_status()
     
     # Set the language of the model to transcribe
     def setLanguage(self, language):
@@ -65,6 +67,9 @@ class WhisperParameters:
 
     def getModelSize(self):
         return self.model.lower()
+    
+    def getGpuUsage(self):
+        return self.gpu
     
     def commandToRun():
         return "whisper "

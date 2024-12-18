@@ -94,6 +94,27 @@ wordTimestampCheckbox = customtkinter.CTkCheckBox(root, text="Word Timestamps", 
 # Pushes timestamp checkbox to the screen
 wordTimestampCheckbox.pack(pady=5)
 
+
+def wordTimestamp_dialog_user_choice():
+    # show a wordTimestamp dialog for selecting a number of words per line
+    if wordTimestamp_var.get() == "True":
+        # Open input dialog when checkbox is checked
+        dialog = customtkinter.CTkInputDialog(text="Enter Max # Words Per Line:", title="1, 3, etc.")
+        user_input = dialog.get_input()
+
+        # Checks if user input is a String with at least one digit
+        if user_input and user_input.isdigit():
+            whisper.setMaxWordsPerLine(int(user_input))
+        else:
+            ctypes.windll.user32.MessageBoxW(0, f"Error", u"Enter a valid Number", 0)
+
+
+
+
+
+
+
+
 createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media")
 
 # allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="",

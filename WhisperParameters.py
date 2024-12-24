@@ -1,6 +1,5 @@
-import os
 import ctypes
-from CheckCudaCapability import check_gpu_status
+from CheckCudaCapability import check_gpu_status_once
 
 # Defines the parameters using accessors and mutator methods
 
@@ -15,7 +14,7 @@ class WhisperParameters:
         self.outputFormat = outputFormat
         self.wordTimestamps = wordTimestamps
         self.maxWordsPerLine = maxWordsPerLine
-        self.gpu = check_gpu_status()
+        self.gpu = check_gpu_status_once()
     
     # Set the language of the model to transcribe
     def setLanguage(self, language):
@@ -24,6 +23,8 @@ class WhisperParameters:
             self.language = "English"
         else:
             self.language = language
+
+        print("Language: " + self.getLanguage())
 
     def getLanguage(self):
         return self.language
@@ -52,18 +53,19 @@ class WhisperParameters:
 
     def setMaxWordsPerLine(self, maxWordsPerLine):
         self.maxWordsPerLine = maxWordsPerLine
-        print("TEST YAY! USING MAX WORDS PER LINE!!!!")
+        print("Max words per line: " + self.getMaxWordsPerLine())
     def getMaxWordsPerLine(self):
         return self.maxWordsPerLine
 
     # Model Size
-    def setModelSize(self, model):
+    def setModelSize(self):
         # Optional: Check for English model
-        if "en" in model.lower():
+        if "En" in self.model.lower():
+            ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English", u"Error with selected model", 0)
             self.language = "English"
         
         # Get just the first word of the model name
-        self.model = model.split()[0].lower()
+        self.model = self.model.split()[0].lower()
             
         #Test case
         print(f"Model: {self.model}, Language: {self.language}")
@@ -74,5 +76,5 @@ class WhisperParameters:
     def getGpuUsage(self):
         return self.gpu
     
-    def commandToRun():
-        return "whisper "
+    def commandToRun(self):
+        print ()

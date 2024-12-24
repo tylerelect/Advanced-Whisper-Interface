@@ -1,6 +1,7 @@
 import ctypes
 from AutoInstallDependencies import AutoInstallDependencies
 from WhisperParameters import WhisperParameters
+from customtkinter import filedialog    
 
 # Check dependencies first
 AutoInstallDependencies.check_dependencies()
@@ -19,14 +20,17 @@ root.title("Advanced Whisper Interface")
 myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=("Arial", 24))
 myLabel.pack(pady=15)  # Add some padding
 
+fileList = []
 # Choose files to convert
+def selectFile():
+        filename = filedialog.askopenfilenames()
+        fileList.extend(filename)
 
+        for file in fileList:
+            print(file)
 
-
-
-
-
-
+fileSelectButton = customtkinter.CTkButton(root, text = "Select File(s)", command=selectFile)
+fileSelectButton.pack(pady=5)
 
 def model_choice(choice):
     whisper.setModelSize(choice)
@@ -79,13 +83,14 @@ supported_languages = ["English", "Spanish", "French", "Afrikaans", "Arabic", "A
                         "Spanish", "Swahili", "Swedish", "Tagalog", "Tamil", "Thai", "Turkish", "Ukrainian", 
                         "Urdu", "Vietnamese", "Welsh"]
 
-outputFormatBox = customtkinter.CTkComboBox(root, values=supported_languages,
+languageBox = customtkinter.CTkComboBox(root, values=supported_languages,
                                             command = language_choice, variable=language_var)
-outputFormatBox.pack(pady=5)
+languageBox.pack(pady=5)
 
 
 def wordTimestamp_choice():
     whisper.setWordTimestamps(wordTimestamp_var.get())
+    wordTimestamp_dialog_user_choice()
 
 
 wordTimestamp_var = customtkinter.StringVar(value="False")
@@ -99,32 +104,29 @@ def wordTimestamp_dialog_user_choice():
     # show a wordTimestamp dialog for selecting a number of words per line
     if wordTimestamp_var.get() == "True":
         # Open input dialog when checkbox is checked
-        dialog = customtkinter.CTkInputDialog(text="Enter Max # Words Per Line:", title="1, 3, etc.")
+        dialog = customtkinter.CTkInputDialog(text="1, 3, etc.", title="Enter Max # Words Per Line:")
         user_input = dialog.get_input()
 
         # Checks if user input is a String with at least one digit
         if user_input and user_input.isdigit():
-            whisper.setMaxWordsPerLine(int(user_input))
+            whisper.setMaxWordsPerLine(user_input)
+
+        elif user_input is None:
+            wordTimestamp_var.set("False")
+            whisper.setWordTimestamps(wordTimestamp_var.get())
+
         else:
-            ctypes.windll.user32.MessageBoxW(0, f"Error", u"Enter a valid Number", 0)
+            ctypes.windll.user32.MessageBoxW(0, f"Enter a valid Number", u"Error", 0)
+            wordTimestamp_var.set("False")
+            whisper.setWordTimestamps(wordTimestamp_var.get())
 
+def createTasksButton():
+    whisper.commandToRun()
+    # foreach(file in fileList):
+    #     whisper.commandToRun()
 
-
-
-
-
-
-
-createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media")
-
-# allRadio = customtkinter.CTkRadioButton(root, text="ALL", variable=outputFormat_var, value="",
-#                                        command=lambda: whisper.useCuda(True))
-# allRadio.pack(pady=2)
-
-#push onto screen
-myLabel.pack()
-createTasks.pack()
-modelSelectBox.pack()
+createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=createTasksButton)
+createTasks.pack(pady=5)
 
 # Loop back through
 root.mainloop()

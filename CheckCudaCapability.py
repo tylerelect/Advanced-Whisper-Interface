@@ -2,6 +2,10 @@ import ctypes
 import subprocess
 import os
 import sys
+
+# Initialize the global variable
+checkGpu = None
+
 # @staticmethod
 def install_torch_dependencies():
     torchPackages = ['torch', 'torchvision', 'torchaudio']
@@ -13,7 +17,11 @@ except ImportError:
     install_torch_dependencies()
     print(f"Successfully installed all torch dependencies.")
 
+
 def check_gpu_status():
+    # Instantiates checkGpu to make sure check_gpu_status() is not called multiple times
+    global checkGpu  # Declare checkGpu as global to modify it within the function
+    
     # Try to run the nvidia-smi command and decode the output
     try:
         subprocess.check_output('nvidia-smi')
@@ -25,20 +33,20 @@ def check_gpu_status():
 
             if(torch.cuda.is_available()):
                 print('Torch and Nvidia GPU detected!')
-                return True
+                checkGpu = True
         else:
             ctypes.windll.user32.MessageBoxW(0, u"Please check your CUDA installation.", u"CUDA Installation Issue", 0)
-            return False
+            checkGpu = False
         
     except subprocess.CalledProcessError as e:
         ctypes.windll.user32.MessageBoxW(0, f"Error: {e}", u"Failed to execute nvidia-smi", 0)
         print("Torch is available: " + (torch.cuda.is_available()))
-        return False
+        checkGpu = False
     
     except FileNotFoundError:
         ctypes.windll.user32.MessageBoxW(0, f"Error: Nvidia installation not found.", u"Execution Error - FileNotFound", 0)
         print("Torch is available: " + (torch.cuda.is_available()))
-        return False
+        checkGpu = False
 
     except Exception: # this command not being found can raise quite a few different errors depending on the configuration
         print('No Nvidia GPU in system!')
@@ -73,5 +81,18 @@ def check_cuda_libraries():
             ctypes.windll.user32.MessageBoxW(0, message, u"CUDA Libraries Not Found", 0)
             return False
     except Exception as e:
+
         ctypes.windll.user32.MessageBoxW(0, f"Unexpected error: {e}", u"Library Check Error", 0)
         return False
+    
+def check_gpu_status_once():
+    global checkGpu  # Ensure checkGpu is declared as global
+    if checkGpu is True:
+        return True
+    elif checkGpu is False:
+        print("Double checked and GPU is not available. Using CPU for rendering.")
+        return False
+    else:
+        check_gpu_status()
+        return check_gpu_status_once()
+    

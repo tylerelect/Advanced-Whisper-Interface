@@ -2,7 +2,7 @@ import ctypes
 import importlib.util
 import sys
 import subprocess
-from CheckCudaCapability import install_torch_dependencies, check_gpu_status
+from CheckCudaCapability import install_torch_dependencies
 
 class AutoInstallDependencies:
     @staticmethod
@@ -15,8 +15,8 @@ class AutoInstallDependencies:
                 AutoInstallDependencies.install_package(package)
        
         
-        from CheckCudaCapability import check_gpu_status
-        check_gpu_status()
+        from CheckCudaCapability import check_gpu_status_once
+        check_gpu_status_once()
 
     @staticmethod
     def install_package(package_name):

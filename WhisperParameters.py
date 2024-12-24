@@ -55,17 +55,20 @@ class WhisperParameters:
         self.maxWordsPerLine = maxWordsPerLine
         print("Max words per line: " + self.getMaxWordsPerLine())
     def getMaxWordsPerLine(self):
+        self.maxWordsPerLine = "{}".format(self.maxWordsPerLine)
         return self.maxWordsPerLine
 
     # Model Size
-    def setModelSize(self):
-        # Optional: Check for English model
-        if "En" in self.model.lower():
-            ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English", u"Error with selected model", 0)
-            self.language = "English"
-        
+    def setModelSize(self, model):
         # Get just the first word of the model name
-        self.model = self.model.split()[0].lower()
+        self.model = model.split()[0].lower()
+
+        # Default to English when model does not support other languages
+        if self.getModelSize() == "tiny" or self.getModelSize() == "base" or self.getModelSize() == "small" or self.getModelSize() == "medium":
+            print("okay the top of the method works")
+            if self.getLanguage() != "English":
+                ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English. Press ok to continue.", u"Error with selected language", 0)
+                self.language = "English"
             
         #Test case
         print(f"Model: {self.model}, Language: {self.language}")
@@ -77,4 +80,9 @@ class WhisperParameters:
         return self.gpu
     
     def commandToRun(self):
-        print ()
+        print (#"Language: " + self.getLanguage() +
+                "\nModel: " + self.getModelSize() +
+                  "\nOutput Format: " + self.getOutputFormat()
+                    + "\nWord Timestamps: " + self.getWordTimestamps()
+                      + "\nMax Words Per Line: " + self.getMaxWordsPerLine())
+                       #"\nOutput Path: " + self.getOutputPath() +

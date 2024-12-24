@@ -24,16 +24,52 @@ fileList = []
 # Choose files to convert
 def selectFile():
         filename = filedialog.askopenfilenames()
+        fileList.clear()
         fileList.extend(filename)
 
+        fileCount = 0
         for file in fileList:
-            print(file)
+            fileCount += 1
+            print(f"File {fileCount}: " + file)
+        print()
 
 fileSelectButton = customtkinter.CTkButton(root, text = "Select File(s)", command=selectFile)
 fileSelectButton.pack(pady=5)
 
+#Select language
+languageLabel = customtkinter.CTkLabel(root, text="Language", font=("Arial", 14))
+languageLabel.pack()
+
+def language_choice(choice):
+    whisper.setLanguage(choice)
+language_var = customtkinter.StringVar(value="English")
+# language_choice = "English"
+customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
+
+supported_languages = ["English", "Spanish", "French", "Afrikaans", "Arabic", "Armenian", "Azerbaijani", "Belarusian",
+                        "Bosnian", "Bulgarian", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English",
+                        "Estonian", "Finnish", "French", "Galician", "German", "Greek", "Hebrew", "Hindi", "Hungarian", 
+                        "Icelandic", "Indonesian", "Italian", "Japanese", "Kannada", "Kazakh", "Korean", 
+                        "Latvian", "Lithuanian", "Macedonian", "Malay", "Marathi", "Maori", "Nepali", "Norwegian", 
+                        "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian", 
+                        "Spanish", "Swahili", "Swedish", "Tagalog", "Tamil", "Thai", "Turkish", "Ukrainian", 
+                        "Urdu", "Vietnamese", "Welsh"]
+
+languageBox = customtkinter.CTkComboBox(root, values=supported_languages,
+                                            command = language_choice, variable=language_var)
+languageBox.pack(pady=5)
+
+
 def model_choice(choice):
     whisper.setModelSize(choice)
+
+    if whisper.getModelSize() == "tiny" or whisper.getModelSize() == "base" or whisper.getModelSize() == "small" or whisper.getModelSize() == "medium":
+        language_var.set("English")  # Set the language variable to English
+        languageBox.set("English")   # Set the combobox text to English
+        languageBox.configure(state="disabled")
+    else:
+        languageBox.configure(state="normal")
+
 
 # Lists Options of Models with VRAM sizes, english only models
 model_var = customtkinter.StringVar(value="Model (VRAM)")
@@ -64,34 +100,9 @@ outputFormatBox = customtkinter.CTkComboBox(root, values=["ALL", "txt", "srt", "
 
 outputFormatBox.pack(pady=5)
 
-#Select language
-languageLabel = customtkinter.CTkLabel(root, text="Language", font=("Arial", 14))
-languageLabel.pack()
-
-def language_choice(choice):
-    whisper.setLanguage(choice)
-language_var = customtkinter.StringVar(value="English")
-# language_choice = "English"
-customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
-
-supported_languages = ["English", "Spanish", "French", "Afrikaans", "Arabic", "Armenian", "Azerbaijani", "Belarusian",
-                        "Bosnian", "Bulgarian", "Catalan", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English",
-                        "Estonian", "Finnish", "French", "Galician", "German", "Greek", "Hebrew", "Hindi", "Hungarian", 
-                        "Icelandic", "Indonesian", "Italian", "Japanese", "Kannada", "Kazakh", "Korean", 
-                        "Latvian", "Lithuanian", "Macedonian", "Malay", "Marathi", "Maori", "Nepali", "Norwegian", 
-                        "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Serbian", "Slovak", "Slovenian", 
-                        "Spanish", "Swahili", "Swedish", "Tagalog", "Tamil", "Thai", "Turkish", "Ukrainian", 
-                        "Urdu", "Vietnamese", "Welsh"]
-
-languageBox = customtkinter.CTkComboBox(root, values=supported_languages,
-                                            command = language_choice, variable=language_var)
-languageBox.pack(pady=5)
-
-
 def wordTimestamp_choice():
     whisper.setWordTimestamps(wordTimestamp_var.get())
     wordTimestamp_dialog_user_choice()
-
 
 wordTimestamp_var = customtkinter.StringVar(value="False")
 wordTimestampCheckbox = customtkinter.CTkCheckBox(root, text="Word Timestamps", command=wordTimestamp_choice,
@@ -120,12 +131,16 @@ def wordTimestamp_dialog_user_choice():
             wordTimestamp_var.set("False")
             whisper.setWordTimestamps(wordTimestamp_var.get())
 
-def createTasksButton():
-    whisper.commandToRun()
-    # foreach(file in fileList):
-    #     whisper.commandToRun()
+def generateButton():
+    # whisper.commandToRun()
+    
+    count = 0
+    for file in fileList:
+        count += 1
+        print(f"File #{count}: {file}")
+    print()
 
-createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=createTasksButton)
+createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=generateButton)
 createTasks.pack(pady=5)
 
 # Loop back through

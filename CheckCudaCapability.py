@@ -40,12 +40,10 @@ def check_gpu_status():
         
     except subprocess.CalledProcessError as e:
         ctypes.windll.user32.MessageBoxW(0, f"Error: {e}", u"Failed to execute nvidia-smi", 0)
-        print("Torch is available: " + (torch.cuda.is_available()))
         checkGpu = False
     
     except FileNotFoundError:
         ctypes.windll.user32.MessageBoxW(0, f"Error: Nvidia installation not found.", u"Execution Error - FileNotFound", 0)
-        print("Torch is available: " + (torch.cuda.is_available()))
         checkGpu = False
 
     except Exception: # this command not being found can raise quite a few different errors depending on the configuration

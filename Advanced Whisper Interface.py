@@ -21,20 +21,27 @@ myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=(
 myLabel.pack(pady=15)  # Add some padding
 
 fileList = []
+
 # Choose files to convert
 def selectFile():
-        filename = filedialog.askopenfilenames()
-        fileList.clear()
-        fileList.extend(filename)
+    filename = filedialog.askopenfilenames()
+    fileList.clear()
+    fileList.extend(filename)
+    
+    fileCount = 0
+    for file in fileList:
+        fileCount += 1
+        print(f"File {fileCount}: " + file)
+    print()
 
-        fileCount = 0
-        for file in fileList:
-            fileCount += 1
-            print(f"File {fileCount}: " + file)
-        print()
+def selectFolder():
+    outputFolder = filedialog.askdirectory()
+    whisper.setOutputPath(outputFolder)
 
 fileSelectButton = customtkinter.CTkButton(root, text = "Select File(s)", command=selectFile)
 fileSelectButton.pack(pady=5)
+folderSelectButton = customtkinter.CTkButton(root, text = "Select Folder", command=selectFolder)
+folderSelectButton.pack(pady=5)
 
 #Select language
 languageLabel = customtkinter.CTkLabel(root, text="Language", font=("Arial", 14))
@@ -132,14 +139,19 @@ def wordTimestamp_dialog_user_choice():
             whisper.setWordTimestamps(wordTimestamp_var.get())
 
 def generateButton():
-    # whisper.commandToRun()
-    
-    count = 0
-    for file in fileList:
-        count += 1
-        print(f"File #{count}: {file}")
-    print()
 
+    if(len(fileList) > 0):
+        print("Generating Text from Media...")
+    
+        countFiles = 0
+        for file in fileList:
+            countFiles += 1
+            print(f"File #{countFiles}: {file} is being processed...")
+            whisper.commandToRun(file)
+    else:
+        ctypes.windll.user32.MessageBoxW(0, u"Please select at least one file.", u"Error", 0)
+        return
+    
 createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=generateButton)
 createTasks.pack(pady=5)
 

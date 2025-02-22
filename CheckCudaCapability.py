@@ -6,7 +6,6 @@ import sys
 # Initialize the global variable
 checkGpu = None
 
-# @staticmethod
 def install_torch_dependencies():
     torchPackages = ['torch', 'torchvision', 'torchaudio']
     subprocess.check_call([sys.executable, "-m", "pip", "install", *torchPackages, "--index-url", "https://download.pytorch.org/whl/cu124"])

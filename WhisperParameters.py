@@ -7,7 +7,7 @@ from CheckCudaCapability import check_gpu_status_once
 class WhisperParameters:
     def __init__(self, language = "English", model = "Medium",
                  outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
-                 outputFormat = "txt", wordTimestamps = None, maxWordsPerLine = 1,):
+                 outputFormat = "txt", wordTimestamps = "False", maxWordsPerLine = str(1)):
         self.language = language
         self.model = model
         self.outputPath = None
@@ -55,7 +55,7 @@ class WhisperParameters:
         self.maxWordsPerLine = maxWordsPerLine
         print("Max words per line: " + self.getMaxWordsPerLine())
     def getMaxWordsPerLine(self):
-        self.maxWordsPerLine = "{}".format(self.maxWordsPerLine)
+        # self.maxWordsPerLine = "{}".format(self.maxWordsPerLine)
         return self.maxWordsPerLine
 
     # Model Size
@@ -79,10 +79,16 @@ class WhisperParameters:
     def getGpuUsage(self):
         return self.gpu
     
-    def commandToRun(self):
-        print (#"Language: " + self.getLanguage() +
-                "\nModel: " + self.getModelSize() +
-                  "\nOutput Format: " + self.getOutputFormat()
-                    + "\nWord Timestamps: " + self.getWordTimestamps()
-                      + "\nMax Words Per Line: " + self.getMaxWordsPerLine())
-                       #"\nOutput Path: " + self.getOutputPath() +
+    def commandToRun(self, currentFile):
+
+        if(self.outputPath is not None):
+            print("Language: " + self.language + 
+                    "\nModel: " + self.model +
+                    "\nOutput Format: " + self.outputFormat +
+                    "\nWord Timestamps: " + self.wordTimestamps +
+                    "\nMax Words Per Line: " + self.maxWordsPerLine +
+                    "\nOutput Path: " + self.outputPath )
+        else:
+            ctypes.windll.user32.MessageBoxW(0, u"Please select an output folder.", u"Error", 0)
+            return
+    

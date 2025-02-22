@@ -1,13 +1,13 @@
 import ctypes
 from AutoInstallDependencies import AutoInstallDependencies
 from WhisperParameters import WhisperParameters
-from customtkinter import filedialog    
 
 # Check dependencies first
 AutoInstallDependencies.check_dependencies()
 
 # Import after verification
 import customtkinter as customtkinter
+from customtkinter import filedialog    
 
 # Sets default model parameters
 whisper = WhisperParameters()

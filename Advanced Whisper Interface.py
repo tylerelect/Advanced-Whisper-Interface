@@ -66,7 +66,6 @@ languageBox = customtkinter.CTkComboBox(root, values=supported_languages,
                                             command = language_choice, variable=language_var)
 languageBox.pack(pady=5)
 
-
 def model_choice(choice):
     whisper.setModelSize(choice)
 
@@ -76,7 +75,6 @@ def model_choice(choice):
         languageBox.configure(state="disabled")
     else:
         languageBox.configure(state="normal")
-
 
 # Lists Options of Models with VRAM sizes, english only models
 model_var = customtkinter.StringVar(value="Model (VRAM)")
@@ -117,7 +115,6 @@ wordTimestampCheckbox = customtkinter.CTkCheckBox(root, text="Word Timestamps", 
 # Pushes timestamp checkbox to the screen
 wordTimestampCheckbox.pack(pady=5)
 
-
 def wordTimestamp_dialog_user_choice():
     # show a wordTimestamp dialog for selecting a number of words per line
     if wordTimestamp_var.get() == "True":
@@ -141,7 +138,7 @@ def wordTimestamp_dialog_user_choice():
 def generateButton():
 
     if(len(fileList) > 0):
-        print("Generating Text from Media...")
+        print("Generating Text from Media...\n")
     
         countFiles = 0
         for file in fileList:

@@ -13,7 +13,6 @@ class AutoInstallDependencies:
             if importlib.util.find_spec(package) is None:
                 print(f"\nRequired package '{package}' is not installed. Installing...\n")
                 AutoInstallDependencies.install_package(package)
-       
         
         from CheckCudaCapability import check_gpu_status_once
         check_gpu_status_once()

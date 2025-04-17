@@ -1,6 +1,7 @@
 import ctypes
 from AutoInstallDependencies import AutoInstallDependencies
 from WhisperParameters import WhisperParameters
+from WarningDialog import WarningDialog
 
 # Check dependencies first
 AutoInstallDependencies.check_dependencies()
@@ -18,7 +19,7 @@ root.title("Advanced Whisper Interface")
 
 # Inside the window
 myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=("Arial", 24))
-myLabel.pack(pady=15)  # Add some padding
+myLabel.pack(padx = 15, pady=15)  # Add some padding
 
 fileList = []
 
@@ -132,6 +133,7 @@ def wordTimestamp_dialog_user_choice():
 
         else:
             ctypes.windll.user32.MessageBoxW(0, f"Enter a valid Number", u"Error", 0)
+            
             wordTimestamp_var.set("False")
             whisper.setWordTimestamps(wordTimestamp_var.get())
 
@@ -146,7 +148,8 @@ def generateButton():
             print(f"File #{countFiles}: {file} is being processed...")
             whisper.commandToRun(file)
     else:
-        ctypes.windll.user32.MessageBoxW(0, u"Please select at least one file.", u"Error", 0)
+        warning_dialog = WarningDialog(title="Error", label_text="Please select at least one file.")
+        warning_dialog.mainloop()
         return
     
 createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=generateButton)

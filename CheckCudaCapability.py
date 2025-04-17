@@ -1,7 +1,7 @@
-import ctypes
 import subprocess
 import os
 import sys
+from WarningDialog import WarningDialog
 
 # Initialize the global variable
 checkGpu = None
@@ -12,7 +12,8 @@ def install_torch_dependencies():
 try:
     import torch
 except ImportError:
-    ctypes.windll.user32.MessageBoxW(0, f"Torch is not installed", u"Found no Python torch installation. Installing...", 0)
+    warning_dialog = WarningDialog(title="Torch is not installed", label_text="Found no Python torch installation. Installing...")
+    warning_dialog.mainloop()
     install_torch_dependencies()
     print(f"Successfully installed all torch dependencies.")
 
@@ -34,15 +35,18 @@ def check_gpu_status():
                 print('Torch and Nvidia GPU detected!')
                 checkGpu = True
         else:
-            ctypes.windll.user32.MessageBoxW(0, u"Please check your CUDA installation.", u"CUDA Installation Issue", 0)
+            warning_dialog = WarningDialog(title="CUDA Installation Issue", label_text="Please check your CUDA installation.")
+            warning_dialog.mainloop()
             checkGpu = False
         
     except subprocess.CalledProcessError as e:
-        ctypes.windll.user32.MessageBoxW(0, f"Error: {e}", u"Failed to execute nvidia-smi", 0)
+        warning_dialog = WarningDialog(title="Nvidia-SMI Error", label_text="Failed to execute nvidia-smi")
+        warning_dialog.mainloop()
         checkGpu = False
     
     except FileNotFoundError:
-        ctypes.windll.user32.MessageBoxW(0, f"Error: Nvidia installation not found.", u"Execution Error - FileNotFound", 0)
+        warning_dialog = WarningDialog(title="FileNotFound Error", label_text="Error: Nvidia installation not found.")
+        warning_dialog.mainloop()
         checkGpu = False
 
     except Exception: # this command not being found can raise quite a few different errors depending on the configuration
@@ -56,11 +60,13 @@ def check_cuda_installation():
         return True
 
     except subprocess.CalledProcessError as e:
-        ctypes.windll.user32.MessageBoxW(0, f"Error: {e}", u"CUDA Execution Error", 0)
+        warning_dialog = WarningDialog(title="Error", label_text="CUDA Execution Error")
+        warning_dialog.mainloop()
         return False
 
     except FileNotFoundError:
-        ctypes.windll.user32.MessageBoxW(0, u"CUDA is not installed or `nvcc` is not in PATH.", u"CUDA Not Found", 0)
+        warning_dialog = WarningDialog(title="CUDA Not Found", label_text="CUDA is not installed or `nvcc` is not in PATH.")
+        warning_dialog.mainloop()
         return False
 
 def check_cuda_libraries():
@@ -75,11 +81,12 @@ def check_cuda_libraries():
             return True
         else:
             message = "CUDA libraries are not found in the expected installation path."
-            ctypes.windll.user32.MessageBoxW(0, message, u"CUDA Libraries Not Found", 0)
+            warning_dialog = WarningDialog(title="Error", label_text="CUDA Libraries Not Found")
+            warning_dialog.mainloop()
             return False
     except Exception as e:
-
-        ctypes.windll.user32.MessageBoxW(0, f"Unexpected error: {e}", u"Library Check Error", 0)
+        warning_dialog = WarningDialog(title="Unexpected error", label_text="Library Check Error")
+        warning_dialog.mainloop()
         return False
     
 def check_gpu_status_once():

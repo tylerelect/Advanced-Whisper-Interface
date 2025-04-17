@@ -1,5 +1,5 @@
-import ctypes
 from CheckCudaCapability import check_gpu_status_once
+from WarningDialog import WarningDialog
 
 # Defines the parameters using accessors and mutator methods
 
@@ -19,7 +19,8 @@ class WhisperParameters:
     # Set the language of the model to transcribe
     def setLanguage(self, language):
         if "en" in self.model.lower():
-            ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English", u"Error with selected model", 0)
+            warning_dialog = WarningDialog(title="Error with selected model", label_text="Selected model only supports English. Defaulting to English")
+            warning_dialog.mainloop()
             self.language = "English"
         else:
             self.language = language
@@ -67,7 +68,8 @@ class WhisperParameters:
         if self.getModelSize() == "tiny" or self.getModelSize() == "base" or self.getModelSize() == "small" or self.getModelSize() == "medium":
             print("okay the top of the method works")
             if self.getLanguage() != "English":
-                ctypes.windll.user32.MessageBoxW(0, u"Selected model only supports English. Defaulting to English. Press ok to continue.", u"Error with selected language", 0)
+                warning_dialog = WarningDialog(title="Selected Language Error", label_text="Selected model only supports English. Defaulting to English. Press ok to continue.")
+                warning_dialog.mainloop()
                 self.language = "English"
             
         #Test case
@@ -89,6 +91,7 @@ class WhisperParameters:
                     "\nMax Words Per Line: " + self.maxWordsPerLine +
                     "\nOutput Path: " + self.outputPath )
         else:
-            ctypes.windll.user32.MessageBoxW(0, u"Please select an output folder.", u"Error", 0)
+            warning_dialog = WarningDialog(title="Output Error", label_text="Please select an output folder.")
+            warning_dialog.mainloop()
             return
     

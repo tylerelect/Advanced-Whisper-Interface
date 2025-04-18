@@ -1,5 +1,6 @@
 from CheckCudaCapability import check_gpu_status_once
 from WarningDialog import WarningDialog
+import subprocess
 
 # Defines the parameters using accessors and mutator methods
 
@@ -56,7 +57,6 @@ class WhisperParameters:
         self.maxWordsPerLine = maxWordsPerLine
         print("Max words per line: " + self.getMaxWordsPerLine())
     def getMaxWordsPerLine(self):
-        # self.maxWordsPerLine = "{}".format(self.maxWordsPerLine)
         return self.maxWordsPerLine
 
     # Model Size
@@ -82,16 +82,36 @@ class WhisperParameters:
         return self.gpu
     
     def commandToRun(self, currentFile):
-
-        if(self.outputPath is not None):
-            print("Language: " + self.language + 
-                    "\nModel: " + self.model +
-                    "\nOutput Format: " + self.outputFormat +
-                    "\nWord Timestamps: " + self.wordTimestamps +
-                    "\nMax Words Per Line: " + self.maxWordsPerLine +
-                    "\nOutput Path: " + self.outputPath )
-        else:
+        if not self.outputPath:
             warning_dialog = WarningDialog(title="Output Error", label_text="Please select an output folder.")
             warning_dialog.mainloop()
             return
-    
+
+        print("Language: " + self.language + 
+            "\nModel: " + self.model +
+            "\nOutput Format: " + self.outputFormat +
+            "\nWord Timestamps: " + self.wordTimestamps +
+            "\nMax Words Per Line: " + str(self.maxWordsPerLine) +
+            "\nOutput Path: " + self.outputPath)
+
+        # Build the whisper command
+        cmd = [
+            "powershell.exe",
+            "whisper",
+            f'"{currentFile}"',
+            f'--model {self.model}',
+            f'--output_format {self.outputFormat}',
+            f'--output_dir "{self.outputPath}"'
+        ]
+        if self.language.lower() != "english":
+            cmd.append(f'--language {self.language.lower()}')
+        if str(self.wordTimestamps).lower() == "true":
+            cmd.append("--word_timestamps")
+        if self.maxWordsPerLine:
+            cmd.append(f'--max_words_per_line {self.maxWordsPerLine}')
+        if self.getGpuUsage():
+            cmd.append("--device cuda")
+
+        full_cmd = " ".join(cmd)
+        print(f"Running: {full_cmd}")
+        subprocess.run(full_cmd, shell=True)

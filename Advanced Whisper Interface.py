@@ -1,4 +1,5 @@
-import ctypes
+import time
+import os  # Ensure this is imported at the top
 from AutoInstallDependencies import AutoInstallDependencies
 from WhisperParameters import WhisperParameters
 from WarningDialog import WarningDialog
@@ -25,15 +26,19 @@ fileList = []
 
 # Choose files to convert
 def selectFile():
-    filename = filedialog.askopenfilenames()
+    # Use filetypes to filter allowed extensions in the file dialog
+    filename = filedialog.askopenfilenames(
+        title="Select Media Files",
+        filetypes=[
+            ("Media", "*.mp3 *.wav *.flac *.ogg *.opus *.m4a *.aac *.wma *.m4b *.mpga *.mp4 *.webm *.mkv *.mov *.avi *.mpeg *.ts")]
+    )
     fileList.clear()
     fileList.extend(filename)
-    
+
     fileCount = 0
     for file in fileList:
         fileCount += 1
-        print(f"File {fileCount}: " + file)
-    print()
+        print(f"File {fileCount}: {file}")
 
 def selectFolder():
     outputFolder = filedialog.askdirectory()
@@ -98,7 +103,6 @@ outputFormat_var = customtkinter.StringVar(value="ALL")
 def outputFormat_choice(choice):
     whisper.setOutputFormat(choice)
 outputFormat_var = customtkinter.StringVar(value="txt")
-# outputFormat_choice = "txt"
 customtkinter.CTkLabel(root, text="Output Format", font=("Arial", 14))
 
 outputFormatBox = customtkinter.CTkComboBox(root, values=["ALL", "txt", "srt", "json", "vtt", "tsv"],
@@ -132,27 +136,91 @@ def wordTimestamp_dialog_user_choice():
             whisper.setWordTimestamps(wordTimestamp_var.get())
 
         else:
-            ctypes.windll.user32.MessageBoxW(0, f"Enter a valid Number", u"Error", 0)
-            
             wordTimestamp_var.set("False")
             whisper.setWordTimestamps(wordTimestamp_var.get())
+            warning_dialog = WarningDialog(title="Error", label_text="Enter a valid number.")
+            warning_dialog.mainloop()      
 
 def generateButton():
-
-    if(len(fileList) > 0):
+    if len(fileList) > 0:
         print("Generating Text from Media...\n")
-    
+        
+        # Disable the button to prevent multiple clicks
+        createTasks.configure(state="disabled")
+        
+        # Start global timing
+        global_start = time.time()
+
         countFiles = 0
+        successful_files = []
+        failed_files = []
+
+        # Get the selected output format
+        output_format = whisper.getOutputFormat().lower()
+
         for file in fileList:
             countFiles += 1
             print(f"File #{countFiles}: {file} is being processed...")
+
+            # Start timing for individual file
+            start_time = time.time()
+
             whisper.commandToRun(file)
+
+            # Determine the expected output file based on the selected format
+            base_name = os.path.splitext(os.path.basename(file))[0]  # Get the file name without extension
+
+            # If output format is "ALL," random check for a .txt file
+            if output_format.lower() == "all":
+                output_file = os.path.join(whisper.getOutputPath(), f"{base_name}.txt")
+            else:
+                output_file = os.path.join(whisper.getOutputPath(), f"{base_name}.{output_format}")
+
+            # Check if the output file exists
+            if os.path.exists(output_file):
+                successful_files.append(file)
+            else:
+                failed_files.append(file)
+
+            # End timing for individual file
+            end_time = time.time()
+            elapsed = end_time - start_time
+
+            print(f"Transcription for File #{countFiles} completed in {elapsed:.2f} seconds.\n")
+
+            # Optional delay for VRAM to clear
+            if whisper.getGpuUsage() == "True":
+                print("Waiting 5 seconds to allow GPU memory to clear...")
+                time.sleep(5)
+
+        # End global timing
+        global_end = time.time()
+        total_time = global_end - global_start
+
+        # Show results in a warning dialog
+        result_message = f"Results:\n\n"
+        if successful_files:
+            result_message += f"✅Successful Files ({len(successful_files)}):\n" + "\n".join(successful_files) + "\n\n"
+        if failed_files:
+            result_message += f"❌Failed Files ({len(failed_files)}):\n" + "\n".join(failed_files)
+
+        # Include total time for all files
+        minutes, seconds = divmod(total_time, 60)
+        result_message += f"\n\nTotal Time: {int(minutes)} minutes and {seconds:.2f} seconds."
+
+        # Close after clicking "Ok"
+        def close_program():
+            root.destroy()
+            warning_dialog.destroy()
+
+        warning_dialog = WarningDialog(title="Transcription Results", label_text=result_message, largewindow=True)
+        warning_dialog.ok_button.configure(command=close_program)
+        warning_dialog.mainloop()
     else:
         warning_dialog = WarningDialog(title="Error", label_text="Please select at least one file.")
         warning_dialog.mainloop()
-        return
-    
-createTasks = customtkinter.CTkButton(root, text = "Generate Text from Media", command=generateButton)
+
+createTasks = customtkinter.CTkButton(root, text="Generate Text from Media", command=generateButton)
 createTasks.pack(pady=5)
 
 # Loop back through

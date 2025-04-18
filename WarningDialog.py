@@ -1,11 +1,13 @@
 import customtkinter
 
 class WarningDialog(customtkinter.CTk):
-    def __init__(self, title, label_text, *args, **kwargs):
+    def __init__(self, title, label_text, largewindow=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        # Dynamically adjust window height based on text length
-        if len(label_text) > 43:
+        # Dynamically adjust window size based on text length or largewindow parameter
+        if largewindow:
+            self.geometry("300x400")  # Larger window size
+        elif len(label_text) > 43:
             self.geometry("300x125")  # Increase height for long text
         else:
             self.geometry("300x100")  # Default height
@@ -29,12 +31,14 @@ class WarningDialog(customtkinter.CTk):
         # Destroy the dialog safely
         self.after(100, self.destroy)  # Add a slight delay before destroying
 
-    def update_content(self, title, label_text):
-        # Dynamically adjust window height based on updated text length
-        if len(label_text) > 45:
-            self.geometry("300x200")  # Increase height for long text
+    def update_content(self, title, label_text, largewindow=False):
+        # Dynamically adjust window size based on updated text length or largewindow parameter
+        if largewindow:
+            self.geometry("300x400") 
+        elif len(label_text) > 45:
+            self.geometry("300x200")
         else:
-            self.geometry("300x100")  # Default height
+            self.geometry("300x100")
 
         self.title(title)  # Update the window title
         self.label.configure(text=label_text)  # Update the label text

@@ -1,3 +1,6 @@
+import shlex
+
+import torch
 from CheckCudaCapability import check_gpu_status_once
 from WarningDialog import WarningDialog
 import subprocess
@@ -87,31 +90,43 @@ class WhisperParameters:
             warning_dialog.mainloop()
             return
 
-        print("Language: " + self.language + 
-            "\nModel: " + self.model +
-            "\nOutput Format: " + self.outputFormat +
-            "\nWord Timestamps: " + self.wordTimestamps +
-            "\nMax Words Per Line: " + str(self.maxWordsPerLine) +
+        print("Language: " + self.getLanguage() + 
+            "\nModel: " + self.getModelSize() +
+            "\nOutput Format: " + self.getOutputFormat() +
+            "\nWord Timestamps: " + self.getWordTimestamps() +
+            "\nMax Words Per Line: " + str(self.getMaxWordsPerLine()) +
             "\nOutput Path: " + self.outputPath)
 
-        # Build the whisper command
+        # Build the command to run Whisper
         cmd = [
-            "powershell.exe",
             "whisper",
-            f'"{currentFile}"',
-            f'--model {self.model}',
-            f'--output_format {self.outputFormat}',
-            f'--output_dir "{self.outputPath}"'
+            currentFile,
+            "--device", "cuda" if self.getGpuUsage() else "cpu",
+            "--model", self.getModelSize(),
+            "--output_dir", self.getOutputPath()
         ]
-        if self.language.lower() != "english":
-            cmd.append(f'--language {self.language.lower()}')
-        if str(self.wordTimestamps).lower() == "true":
-            cmd.append("--word_timestamps")
-        if self.maxWordsPerLine:
-            cmd.append(f'--max_words_per_line {self.maxWordsPerLine}')
-        if self.getGpuUsage():
-            cmd.append("--device cuda")
 
-        full_cmd = " ".join(cmd)
-        print(f"Running: {full_cmd}")
-        subprocess.run(full_cmd, shell=True)
+        if self.getOutputFormat().lower() != "all":
+            cmd.extend(["--output_format", self.getOutputFormat()])
+
+        if self.language != "English":
+            cmd.extend(["--language", self.getLanguage()])
+        else :
+            cmd.extend(["--language", "English"])
+
+        if str(self.wordTimestamps).lower() == "true":
+            cmd.extend(["--word_timestamps", "True"])
+            cmd.extend(["--max_words_per_line", str(self.getMaxWordsPerLine())])
+
+        # Safely quote the command
+        safe_cmd = " ".join(shlex.quote(part) for part in cmd)
+        print(f"Running: {safe_cmd}")
+
+    
+        print("Using GPU:", torch.cuda.is_available())
+        print("GPU name:", torch.cuda.get_device_name(0))
+        process = subprocess.Popen(
+            f'start /wait powershell.exe -Command {safe_cmd}', #add NoExit param to keep the window open
+            shell=True
+        )
+        process.wait()

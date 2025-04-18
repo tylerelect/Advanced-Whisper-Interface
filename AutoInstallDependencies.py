@@ -1,8 +1,8 @@
-import ctypes
 import importlib.util
 import sys
 import subprocess
 from CheckCudaCapability import install_torch_dependencies
+from WarningDialog import WarningDialog
 
 class AutoInstallDependencies:
     @staticmethod
@@ -26,6 +26,7 @@ class AutoInstallDependencies:
                 subprocess.check_call([sys.executable, "-m", "pip", "install", "-U", package_name])
             print(f"Successfully installed {package_name}")
         except subprocess.CalledProcessError as e:
-            ctypes.windll.user32.MessageBoxW(0, f"Error: {e}", u"Error - Python Package Installation FAILED", 0)
+            warning_dialog = WarningDialog(title="Error", label_text="Error - Python Package Installation FAILED")
+            warning_dialog.mainloop()
             sys.exit()
         

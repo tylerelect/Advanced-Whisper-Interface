@@ -41,7 +41,7 @@ def selectFolder():
 
 fileSelectButton = customtkinter.CTkButton(root, text = "Select File(s)", command=selectFile)
 fileSelectButton.pack(pady=5)
-folderSelectButton = customtkinter.CTkButton(root, text = "Select Folder", command=selectFolder)
+folderSelectButton = customtkinter.CTkButton(root, text = "Output Folder", command=selectFolder)
 folderSelectButton.pack(pady=5)
 
 #Select language

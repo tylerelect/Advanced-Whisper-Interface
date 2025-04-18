@@ -26,16 +26,6 @@ class WarningDialog(customtkinter.CTk):
         self.ok_button.pack(pady=(5, 15))  # Adjusted padding for spacing
 
     def close_dialog(self):
-        # Cancel any pending after() callbacks
-        try:
-            self.after_cancel(self.after_id)  # Cancel scheduled callbacks if any
-        except AttributeError:
-            pass  # Ignore if no after_id exists
-
-        # Safely destroy all child widgets
-        for widget in self.winfo_children():
-            widget.destroy()
-
         # Destroy the dialog safely
         self.after(100, self.destroy)  # Add a slight delay before destroying
 

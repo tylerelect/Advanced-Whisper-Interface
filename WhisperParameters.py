@@ -1,13 +1,10 @@
 import shlex
-
 import torch
 from CheckCudaCapability import check_gpu_status_once
 from WarningDialog import WarningDialog
 import subprocess
 
 # Defines the parameters using accessors and mutator methods
-
-# TODO: create original variable for large and any other non-english models for referring back to them
 class WhisperParameters:
     def __init__(self, language = "English", model = "Medium",
                  outputPath = "%%userprofile%%\Desktop\Advanced Whisper Output", 
@@ -39,9 +36,6 @@ class WhisperParameters:
     def getOutputPath(self):
         return self.outputPath
     
-    # def setCustomFileName(self, name):
-    #     self.outputPath = os.path.join(self.outputPath, name)
-
     def setOutputFormat(self, outputFormat):
         self.outputFormat = outputFormat
         print(self.getOutputFormat())
@@ -73,9 +67,7 @@ class WhisperParameters:
             if self.getLanguage() != "English":
                 warning_dialog = WarningDialog(title="Selected Language Error", label_text="Selected model only supports English. Defaulting to English. Press ok to continue.")
                 warning_dialog.mainloop()
-                self.language = "English"
-            
-        #Test case
+                self.language = "English"            
         print(f"Model: {self.model}, Language: {self.language}")
 
     def getModelSize(self):
@@ -121,7 +113,6 @@ class WhisperParameters:
         # Safely quote the command
         safe_cmd = " ".join(shlex.quote(part) for part in cmd)
         print(f"Running: {safe_cmd}")
-
     
         print("Using GPU:", torch.cuda.is_available())
         print("GPU name:", torch.cuda.get_device_name(0))

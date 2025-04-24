@@ -16,10 +16,10 @@ whisper = WhisperParameters()
 
 # Label widget - Inner window workings
 root = customtkinter.CTk()
-root.title("Advanced Whisper Interface")
+root.title("AdvancedWhisperMain")
 
 # Inside the window
-myLabel = customtkinter.CTkLabel(root, text="Advanced Whisper Interface", font=("Arial", 24))
+myLabel = customtkinter.CTkLabel(root, text="AdvancedWhisperMain", font=("Arial", 24))
 myLabel.pack(padx = 15, pady=15)  # Add some padding
 
 fileList = []
